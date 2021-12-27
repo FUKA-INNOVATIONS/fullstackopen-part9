@@ -15,13 +15,13 @@ const calculateBmi = ( height: number, weight: number ): String => {
     const bmi = Number(( weight / ( ( height * height ) / 10000 ) ).toFixed( 2 ));
 
     if ( bmi > 0 && bmi < 18.5 ) {
-        return '1'
+        return 'underweight'
     } else if ( bmi >= 18.5 && bmi < 25 ) {
         return 'Normal (healthy weight)\n'
     } else if ( bmi >= 25 && bmi <= 29.9 ) {
-        return '3'
+        return 'overweight'
     } else if ( bmi >= 30 ) {
-        return '3'
+        return 'obese'
     } else {
         throw new Error( 'Please double-check given values and try again!!' );
     }
