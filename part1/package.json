@@ -7,7 +7,8 @@
     "ts-node": "ts-node",
     "multiply": "ts-node multiplier.ts",
     "calculate": "ts-node calculator.ts",
-    "calculateBmi": "ts-node bmiCalculator.ts"
+    "calculateBmi": "ts-node bmiCalculator.ts",
+    "calculateExercises": "ts-node exerciseCalculator.ts"
   },
   "keywords": [],
   "author": "",
@@ -15,5 +16,8 @@
   "devDependencies": {
     "@types/node": "^17.0.5",
     "tslib": "^2.3.1"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
   }
 }
