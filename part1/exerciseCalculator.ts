@@ -38,7 +38,6 @@ const getRate = ( average: number ): Rating => {
 const createPeriodListFromInput = ( hours: Array<string> ): Array<number> =>
     hours.filter(( _hour, index) => index > 2).map(hour => Number(hour))
 
-
 const exerciseCalculator = ( dailyHours: Array<number>, target: number ): Review => {
 
     if (process.argv.length > 3) {
@@ -91,3 +90,6 @@ try {
     console.log( errorMessage );
 }
 
+
+
+export default exerciseCalculator

@@ -1,30 +1,49 @@
 import express from 'express';
+
 const app = express();
+app.use( express.json() )
 import calculateBmi from "./bmiCalculator";
+import exerciseCalculator from './exerciseCalculator'
 
-app.get('/hello', ( _req, res) => {
-    res.send('Hello Full Stack!');
-});
+app.post( '/exercise', ( req, res ) => {
+    const daily_exercises = req.body.daily_exercises
+    const target = Number( req.body.target )
 
-app.get('/bmi', ( _req, res) => {
-    //res.send(`${_req.query.height}`);
+    if ( !isNaN( target ) && Array.isArray( daily_exercises ) ) {
+        try {
+            const result = exerciseCalculator( daily_exercises, target )
+            res.json( result )
+        } catch ( err ) {
+            res.json( { error: 'malformatted parameters' } )
+        }
+    } else {
+        res.json( { error: 'malformatted parameters' } )
+    }
+} )
 
-    const height = Number(_req.query.height)
-    const weight = Number(_req.query.weight)
-    if ( !isNaN(height) && !isNaN(weight) ) {
+app.get( '/hello', ( _req, res ) => {
+    res.send( 'Hello Full Stack!' )
+} );
+
+
+app.get( '/bmi', ( req, res ) => {
+    const height = Number( req.query.height )
+    const weight = Number( req.query.weight )
+
+    if ( !isNaN( height ) && !isNaN( weight ) ) {
         const object = {
             weight,
             height,
-            bmi: calculateBmi(height, weight)
+            bmi: calculateBmi( height, weight )
         }
-        res.json(object)
+        res.json( object )
     } else {
-        res.json({ error: 'malformatted parameters' })
+        res.json( { error: 'malformatted parameters' } )
     }
-});
+} );
 
 const PORT = 3003;
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+app.listen( PORT, () => {
+    console.log( `Server running on port ${ PORT }` );
+} );

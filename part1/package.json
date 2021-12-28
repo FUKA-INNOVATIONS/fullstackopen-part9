@@ -11,7 +11,8 @@
     "calculateExercises": "ts-node exerciseCalculator.ts",
     "playground": "ts-node playground.ts",
     "start": "ts-node index.ts",
-    "dev": "ts-node-dev index.ts"
+    "dev": "ts-node-dev index.ts",
+    "lint": "eslint --ext .ts ."
   },
   "keywords": [],
   "author": "",
@@ -19,6 +20,9 @@
   "devDependencies": {
     "@types/express": "^4.17.13",
     "@types/node": "^17.0.5",
+    "@typescript-eslint/eslint-plugin": "^5.8.1",
+    "@typescript-eslint/parser": "^5.8.1",
+    "eslint": "^8.5.0",
     "ts-node-dev": "^1.1.8",
     "tslib": "^2.3.1"
   },
