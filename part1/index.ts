@@ -14,10 +14,10 @@ app.post( '/exercise', ( req, res ) => {
             const result = exerciseCalculator( daily_exercises, target )
             res.json( result )
         } catch ( err ) {
-            res.json( { error: 'malformatted parameters' } )
+            res.status(400).json( { error: 'malformatted parameters' } )
         }
     } else {
-        res.json( { error: 'malformatted parameters' } )
+        res.status(400).json( { error: 'malformatted parameters' } )
     }
 } )
 
@@ -38,7 +38,7 @@ app.get( '/bmi', ( req, res ) => {
         }
         res.json( object )
     } else {
-        res.json( { error: 'malformatted parameters' } )
+        res.status(400).json( { error: 'malformatted parameters' } )
     }
 } );
 
