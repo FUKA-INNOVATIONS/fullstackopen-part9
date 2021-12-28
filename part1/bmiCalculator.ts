@@ -14,6 +14,8 @@ type BmiResult = String;
 const calculateBmi = ( height: number, weight: number ): String => {
     const bmi = Number(( weight / ( ( height * height ) / 10000 ) ).toFixed( 2 ));
 
+
+
     if ( bmi > 0 && bmi < 18.5 ) {
         return 'underweight'
     } else if ( bmi >= 18.5 && bmi < 25 ) {

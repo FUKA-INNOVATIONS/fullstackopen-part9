@@ -8,7 +8,8 @@
     "multiply": "ts-node multiplier.ts",
     "calculate": "ts-node calculator.ts",
     "calculateBmi": "ts-node bmiCalculator.ts",
-    "calculateExercises": "ts-node exerciseCalculator.ts"
+    "calculateExercises": "ts-node exerciseCalculator.ts",
+    "playground": "ts-node playground.ts"
   },
   "keywords": [],
   "author": "",

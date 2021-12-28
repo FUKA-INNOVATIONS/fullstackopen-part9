@@ -34,7 +34,17 @@ const getRate = ( average: number ): Rating => {
     }
 }
 
+// Create hoursList from command line input
+const createPeriodListFromInput = ( hours: Array<string> ): Array<number> =>
+    hours.filter((hour, index) => index > 2).map(hour => Number(hour))
+
+
 const exerciseCalculator = ( dailyHours: Array<number>, target: number ): Review => {
+
+    if (process.argv.length > 3) {
+        target = Number(process.argv[2])
+        dailyHours = createPeriodListFromInput(process.argv)
+    }
 
     const trainingDays: number
         = dailyHours.map( dayHour => dayHour > 0 ).length
