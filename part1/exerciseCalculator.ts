@@ -1,4 +1,4 @@
-const lodash = require('lodash')
+const lodash = require( 'lodash' )
 
 interface Review {
     periodLength: number,
@@ -15,13 +15,13 @@ interface Rating {
     description: String
 }
 
-const getRate =  ( average: number ): Rating => {
+const getRate = ( average: number ): Rating => {
     if ( average <= 1 ) {
         return {
             value: 1,
             description: 'You have done progress, keep on!'
         }
-    } else if ( average <= 2  ) {
+    } else if ( average <= 2 ) {
         return {
             value: 2,
             description: 'Not too bad but could be better!'
@@ -36,27 +36,48 @@ const getRate =  ( average: number ): Rating => {
 
 const exerciseCalculator = ( dailyHours: Array<number>, target: number ): Review => {
 
-    const  trainingDays: number
-        = dailyHours.map(dayHour => dayHour > 0 ).length
+    const trainingDays: number
+        = dailyHours.map( dayHour => dayHour > 0 ).length
     const periodLength: number
         = dailyHours.length
     const totalHours: number
-        = lodash.sum(dailyHours)
+        = lodash.sum( dailyHours )
     const average = totalHours / trainingDays
-    const rate: Rating = getRate(average)
+    const rate: Rating = getRate( average )
 
-    return {
+    const Review: Review = {
         periodLength: dailyHours.length,
-        trainingDays: dailyHours.filter(dayHour => dayHour > 0 ).length,
+        trainingDays: dailyHours.filter( dayHour => dayHour > 0 ).length,
         success: average >= target,
         rating: rate.value,
         ratingDescription: rate.description,
         target: target,
         average: average
     }
+
+    if ( !isNaN(average) ) {
+        switch ( rate.value ) {
+            case 1:
+            case 2:
+            case 3:
+                return Review
+            default:
+                throw new Error( 'Please check given values and try again!' )
+        }
+    } else {
+        throw new Error( 'Please check given values and try again!' )
+    }
 }
 
-console.log(
-    exerciseCalculator([3, 0, 2, 4.5, 0, 3, 1], 2 )
-)
+try {
+    console.log(
+        exerciseCalculator( [3, 0, 2, 4.5, 0, 3, 1], 2 )
+    )
+} catch ( error: unknown ) {
+    let errorMessage = 'Something went wrong.'
+    if ( error instanceof Error ) {
+        errorMessage += ' Error: ' + error.message;
+    }
+    console.log( errorMessage );
+}
 
