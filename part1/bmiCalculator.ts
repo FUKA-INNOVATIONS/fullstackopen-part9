@@ -12,9 +12,17 @@ Class 4: obese (30 or more)
 type BmiResult = String;
 
 const calculateBmi = ( height: number, weight: number ): String => {
+
+    if ( process.argv.length > 2 ) {
+        try {
+            height = Number(process.argv[2])
+            weight = Number(process.argv[3])
+        } catch ( error ) {
+            throw new Error('Command line inputs could not be changed to numbers')
+        }
+    }
+
     const bmi = Number(( weight / ( ( height * height ) / 10000 ) ).toFixed( 2 ));
-
-
 
     if ( bmi > 0 && bmi < 18.5 ) {
         return 'underweight'
