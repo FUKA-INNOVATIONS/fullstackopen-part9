@@ -36,7 +36,7 @@ const getRate = ( average: number ): Rating => {
 
 // Create hoursList from command line input
 const createPeriodListFromInput = ( hours: Array<string> ): Array<number> =>
-    hours.filter((hour, index) => index > 2).map(hour => Number(hour))
+    hours.filter(( _hour, index) => index > 2).map(hour => Number(hour))
 
 
 const exerciseCalculator = ( dailyHours: Array<number>, target: number ): Review => {
@@ -48,8 +48,8 @@ const exerciseCalculator = ( dailyHours: Array<number>, target: number ): Review
 
     const trainingDays: number
         = dailyHours.map( dayHour => dayHour > 0 ).length
-    const periodLength: number
-        = dailyHours.length
+    /*const periodLength: number
+        = dailyHours.length*/
     const totalHours: number
         = lodash.sum( dailyHours )
     const average = totalHours / trainingDays
