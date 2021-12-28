@@ -7,10 +7,6 @@ Class 2: normal weight (18.5 to 24.9)
 Class 3: overweight (25 to 29.9)
 Class 4: obese (30 or more)
  */
-
-
-type BmiResult = String;
-
 const calculateBmi = ( height: number, weight: number ): String => {
 
     if ( process.argv.length > 2 ) {
@@ -46,3 +42,5 @@ try {
     }
     console.log( errorMessage );
 }
+
+export default calculateBmi
