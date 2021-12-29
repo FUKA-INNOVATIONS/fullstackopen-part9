@@ -8,7 +8,7 @@ interface TotalProps {
 const Total = ({ exerciseSum }: TotalProps) => {
     return (
         <>
-            <p>Number of exercises {exerciseSum}</p>
+            <p style={{ marginTop: 40 }}>Number of exercises {exerciseSum}</p>
         </>
     )
 }
