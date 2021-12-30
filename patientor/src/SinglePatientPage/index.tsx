@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { PatientFromApi } from "../types";
+import { Entry, PatientFromApi } from "../types";
 import { apiBaseUrl } from "../constants";
 import { useStateValue } from "../state";
 
@@ -12,31 +12,49 @@ interface RouterParams {
 const SinglePatientPage = () => {
     // const { id } = useParams<{ id: string }>();
     const { id } = useParams<RouterParams>();
-    const [{ patient }, dispatch] = useStateValue();
+    const [ { patient }, dispatch ] = useStateValue();
 
+    const entries: Entry[] = patient.entries as Entry[];
 
-    useEffect(() => {
+    useEffect( () => {
         if ( patient.id !== id ) {
-            console.log('Fetching Patient..');
+            console.log( 'Fetching and adding Patient to app state..' );
             const fetchPatient = async () => {
                 try {
                     const { data: patientFromApi } = await axios.get<PatientFromApi>(
-                        `${apiBaseUrl}/patients/${id}`
+                        `${ apiBaseUrl }/patients/${ id }`
                     );
-                    dispatch({ type: "GET_PATIENT", payload: patientFromApi });
-                } catch (e) {
-                    console.error(e);
+                    dispatch( { type: "GET_PATIENT", payload: patientFromApi } );
+                } catch ( e ) {
+                    console.error( e );
                 }
             };
             void fetchPatient();
         }
-    }, []);
+    }, [] );
 
     return (
         <>
-            <p><b> {patient.name} | {patient.gender} </b></p>
-            <p>SSN: {patient.ssn}</p>
-            <p>Occupation: {patient.occupation}</p>
+            <p><b> { patient.name } | { patient.gender } </b></p>
+            <p>SSN: { patient.ssn }</p>
+            <p>Occupation: { patient.occupation }</p>
+            <br/>
+            <p><b>Entries</b></p>
+            {entries?.map( entry => {
+                return (
+                    <div key={ entry.id }>
+                        <p>{ entry.date }</p>
+                        <p>{ entry.description }</p>
+                        <ul>
+                        {entry.diagnosisCodes && entry.diagnosisCodes.map(c => {
+                            return <li key={c}>{c}</li>;
+                        }) }
+                        </ul>
+                    </div>
+                );
+            } ) }
+            <div>
+            </div>
         </>
     );
 };
