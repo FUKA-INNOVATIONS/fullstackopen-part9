@@ -11,11 +11,7 @@ const getPatients = (): Array<Patient> => {
 
 const getPublicPatientSingle = (id: string): PublicPatientSingle => {
     const [patientFound]  = patients.filter(p => p.id === id);
-    console.log('single patient in service ', patientFound)
-    return {
-        ...patientFound,
-        entries: []
-    }
+    return patientFound
 }
 
 const addPatient = ( patient: NewPatient ): PublicPatient => {

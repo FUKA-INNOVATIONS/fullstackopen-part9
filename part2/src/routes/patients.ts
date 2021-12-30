@@ -10,7 +10,6 @@ router.get( '/', ( _req, res ) => {
 
 router.get( '/:id', ( req, res ) => {
     const patientFound = patientService.getPublicPatientSingle(req.params.id);
-    console.log('single patient in router ', patientFound)
     if (patientFound) {
         res.json( patientFound )
     } else {
