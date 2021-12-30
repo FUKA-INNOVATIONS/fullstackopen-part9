@@ -1,24 +1,33 @@
 import patientData from '../data/patientData'
-import { PatientEntry, NonSensitivePatientEntry, NewPatientEntry } from "../types";
+import { Patient, PublicPatient, NewPatient, PublicPatientSingle } from "../types";
 import { v1 as uuid } from 'uuid';
 const id = uuid()
 
-const patients: Array<PatientEntry> = patientData
+const patients: Array<Patient> = patientData
 
-const getEntries = (): Array<PatientEntry> => {
+const getPatients = (): Array<Patient> => {
     return patients
 }
 
-const addEntry = ( patient: NewPatientEntry ): NonSensitivePatientEntry => {
-    const newPatientEntry = {
+const getPublicPatientSingle = (id: string): PublicPatientSingle => {
+    const [patientFound]  = patients.filter(p => p.id === id);
+    console.log('single patient in service ', patientFound)
+    return {
+        ...patientFound,
+        entries: []
+    }
+}
+
+const addPatient = ( patient: NewPatient ): PublicPatient => {
+    const newPatient = {
         id,
         ...patient
     }
-    patients.push(newPatientEntry)
-    return newPatientEntry
+    patients.push(newPatient)
+    return newPatient
 }
 
-const getNonSensitiveEntries = (): NonSensitivePatientEntry[] => {
+const getPatientsPublic = (): PublicPatient[] => {
     return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
         id,
         name,
@@ -28,8 +37,10 @@ const getNonSensitiveEntries = (): NonSensitivePatientEntry[] => {
     }));
 };
 
+
 export default {
-    getEntries,
-    getNonSensitiveEntries,
-    addEntry
+    getPatients,
+    getPatientsPublic,
+    addPatient,
+    getPublicPatientSingle
 }
