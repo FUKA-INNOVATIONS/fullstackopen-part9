@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Entry, PatientFromApi } from "../types";
+import { Diagnosis, Entry, PatientFromApi } from "../types";
 import { apiBaseUrl } from "../constants";
 import { useStateValue } from "../state";
 
@@ -13,6 +13,8 @@ const SinglePatientPage = () => {
     // const { id } = useParams<{ id: string }>();
     const { id } = useParams<RouterParams>();
     const [ { patient }, dispatch ] = useStateValue();
+    const [ { diagnoses }, dispatchDiagnoses ] = useStateValue();
+
 
     const entries: Entry[] = patient.entries as Entry[];
 
@@ -33,6 +35,21 @@ const SinglePatientPage = () => {
         }
     }, [] );
 
+    useEffect( () => {
+            console.log( 'Fetching and adding Diagnoses to app state..' );
+            const fetchDiagnoses = async () => {
+                try {
+                    const { data: diagnoses } = await axios.get<Diagnosis[]>(
+                        `${ apiBaseUrl }/diagnoses`
+                    );
+                    dispatchDiagnoses( { type: "SET_DIAGNOSIS", payload: diagnoses } );
+                } catch ( e ) {
+                    console.error( e );
+                }
+            };
+            void fetchDiagnoses();
+    }, [id] );
+
     return (
         <>
             <p><b> { patient.name } | { patient.gender } </b></p>
@@ -47,7 +64,11 @@ const SinglePatientPage = () => {
                         <p>{ entry.description }</p>
                         <ul>
                         {entry.diagnosisCodes && entry.diagnosisCodes.map(c => {
-                            return <li key={c}>{c}</li>;
+                            const diagnoseFound = diagnoses?.filter(d => d.code === c);
+                            return (
+                                <li key={c}><b>{c}</b> - {diagnoseFound.map(d => d.name)}</li>
+                            );
+
                         }) }
                         </ul>
                     </div>
