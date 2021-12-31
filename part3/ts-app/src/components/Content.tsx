@@ -1,5 +1,6 @@
 import React from "react";
 import { CoursePart } from "../types";
+
 import Part from "./Part";
 
 
@@ -22,61 +23,23 @@ const assertNever = ( value: never ): never => {
     );
 };
 
+
 const Content = ( { parts }: ContentProps ): JSX.Element => {
     return (
         <>
-            {/*parts.map((part, index) => {
-                return (
-                    <p key={index}>{part.name} {part.exerciseCount}</p>
-                )
-            })*/}
 
-            {
-                parts.map((part: CoursePart) => {
+            { parts.map((part: CoursePart) => {
                     switch (part.type) {
                         case 'normal':
-                            return (
-                                <Part
-                                    key={part.name}
-                                    description={part.description}
-                                    type={part.type} name={part.name}
-                                    exerciseCount={part.exerciseCount} />
-                            )
-                            break;
+                            return <Part key={part.name} {...part} />
                         case 'groupProject':
-                            return (
-                                <Part
-                                    key={part.name}
-                                    type={part.type}
-                                    name={part.name}
-                                    exerciseCount={part.exerciseCount}
-                                    groupProjectCount={part.groupProjectCount} />
-                            )
-                            break
+                            return <Part key={part.name} {...part} />
                         case 'submission':
-                            return (
-                                <Part
-                                    key={part.name}
-                                    type={part.type}
-                                    name={part.name}
-                                    exerciseCount={part.exerciseCount}
-                                    description={part.description}
-                                    exerciseSubmissionLink={part.exerciseSubmissionLink} />
-                            )
-                            break;
+                            return <Part key={part.name} {...part} />
                         case 'special':
-                            return (
-                                <Part
-                                    key={part.name}
-                                    type={part.type}
-                                    name={part.name}
-                                    exerciseCount={part.exerciseCount}
-                                    description={part.description}
-                                    requirements={part.requirements} />
-                            )
-                            break;
+                            return <Part key={part.name} {...part} />
                         default:
-                            break
+                            return assertNever(part)
                     }
                 })
             }

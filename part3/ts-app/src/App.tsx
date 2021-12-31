@@ -46,6 +46,7 @@ const App = () => {
         courseParts.reduce( ( carry, part ) => carry + part.exerciseCount, 0 )
 
 
+
     return (
         <div>
             <Header name={ courseName }/>

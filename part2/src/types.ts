@@ -22,8 +22,15 @@ export interface Patient {
     ssn: string,
     gender: Gender,
     occupation: string,
-    entries: Entry[]
+    entries?: Entry[]
 }
+
+/*
+export type NewEntry = NewHospitalEntry | NewHealthCheckEntry | NewOccupationalHealthcareEntry;
+export type NewHospitalEntry = Omit<HospitalEntry, 'diagnosisCodes'>;
+export type NewHealthCheckEntry = Omit<HealthCheckEntry, 'diagnosisCodes'>;
+export type NewOccupationalHealthcareEntry = Omit<OccupationalHealthcareEntry, 'diagnosisCodes'>
+*/
 
 export type Entry =
     | HospitalEntry
@@ -45,7 +52,7 @@ export enum HealthCheckRating {
     "CriticalRisk" = 3
 }
 
-interface DischargeType {
+export interface DischargeType {
     date: string;
     criteria: string;
 }

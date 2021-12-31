@@ -1,6 +1,15 @@
 import React from "react";
 import { CoursePart } from "../types";
 
+/**
+ * Helper function for exhaustive type checking
+ */
+const assertNever = ( value: never ): never => {
+    throw new Error(
+        `Unhandled discriminated union member: ${ JSON.stringify( value ) }`
+    );
+};
+
 
 const Part = ( props: CoursePart ) => {
     switch ( props.type ) {
@@ -41,6 +50,7 @@ const Part = ( props: CoursePart ) => {
                 </>
             )
         default:
+            assertNever(props)
             return (
                 <p>unknown part found</p>
             )

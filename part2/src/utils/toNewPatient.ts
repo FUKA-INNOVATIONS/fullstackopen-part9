@@ -55,14 +55,16 @@ const isGender = (param: any): param is Gender => {
 
 
 const toNewPatient = ( object: any): NewPatient => {
-    const newEntry: NewPatient = {
+    const newPatient: NewPatient = {
         name: parseName(object.name),
         dateOfBirth: parseDate(object.dateOfBirth),
         ssn: parseSsn(object.ssn),
         gender: parseGender(object.gender),
         occupation: parseOccupation(object.occupation)
     }
-    return newEntry
+    return newPatient
 }
+
+
 
 export default toNewPatient
