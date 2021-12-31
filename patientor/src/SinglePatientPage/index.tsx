@@ -4,6 +4,10 @@ import axios from "axios";
 import { Diagnosis, Entry, PatientFromApi } from "../types";
 import { apiBaseUrl } from "../constants";
 import { useStateValue } from "../state";
+import { Segment, Button } from "semantic-ui-react";
+import AddHospitalEntryModal from "../AddEntryModals/AddHospitalEntryModal";
+import { HospitalEntryFormValues } from "../AddEntryModals/AddHospitalEntryModal/AddHospitalEntryForm";
+import { uniq } from "lodash";
 
 interface RouterParams {
     id: string
@@ -14,12 +18,50 @@ const SinglePatientPage = () => {
     const { id } = useParams<RouterParams>();
     const [ { patient }, dispatch ] = useStateValue();
     const [ { diagnoses }, dispatchDiagnoses ] = useStateValue();
+    const [ refreshPatient, setRefreshPatient ] = React.useState<boolean>( false );
+
+    const [ hospitalEntryModalOpen, setHospitalEntryModalOpen ] = React.useState<boolean>( false );
+    const [ hospitalEntryError, setHospitalEntryError ] = React.useState<string | undefined>();
+    const openHospitalEntryModal = (): void => setHospitalEntryModalOpen( true );
+    const closeHospitalEntryModal = (): void => {
+        setHospitalEntryModalOpen( false );
+        setHospitalEntryError( undefined );
+    };
+    const submitNewHospitalEntry = async ( values: HospitalEntryFormValues ) => {
+
+        // Remove white spaces and Convert diagnosisCodes from string array
+        // Remove code duplicates
+        const diagnosesLength = values.diagnosisCodes?.length;
+        if ( diagnosesLength !== 0 ) {
+            values.diagnosisCodes = uniq( values.diagnosisCodes?.toString().replace( /\s/g, '' ).split( ',' ) );
+        } else {
+            values.diagnosisCodes = [];
+        }
+
+        try {
+            const { data: newEntry } = await axios.post<Entry>(
+                `${ apiBaseUrl }/patients/${ id }/entries`,
+                values
+            );
+            console.log( 'newEntry: ', newEntry );
+            dispatch( { type: "ADD_ENTRY", payload: newEntry } );
+            //closeHospitalEntryModal();
+        } catch ( e ) {
+            console.error( 'Form error: ', e.response?.data || 'Unknown Error' );
+            setHospitalEntryError( e.response?.data?.error || 'Unknown error, Entry was not added. Please check form values and try again!' );
+        }
+
+        // Refresh patient details and close modal.
+        console.log( 'errorState: ', hospitalEntryError );
+        setRefreshPatient( true );
+        setHospitalEntryModalOpen( false );
+    };
 
 
     const entries: Entry[] = patient.entries as Entry[];
 
     useEffect( () => {
-        if ( patient.id !== id ) {
+        if ( patient.id !== id || refreshPatient ) {
             console.log( 'Fetching and adding Patient to app state..' );
             const fetchPatient = async () => {
                 try {
@@ -27,28 +69,29 @@ const SinglePatientPage = () => {
                         `${ apiBaseUrl }/patients/${ id }`
                     );
                     dispatch( { type: "GET_PATIENT", payload: patientFromApi } );
+                    setRefreshPatient( false );
                 } catch ( e ) {
                     console.error( e );
                 }
             };
             void fetchPatient();
         }
-    }, [] );
+    }, [ refreshPatient ] );
 
     useEffect( () => {
-            console.log( 'Fetching and adding Diagnoses to app state..' );
-            const fetchDiagnoses = async () => {
-                try {
-                    const { data: diagnoses } = await axios.get<Diagnosis[]>(
-                        `${ apiBaseUrl }/diagnoses`
-                    );
-                    dispatchDiagnoses( { type: "SET_DIAGNOSIS", payload: diagnoses } );
-                } catch ( e ) {
-                    console.error( e );
-                }
-            };
-            void fetchDiagnoses();
-    }, [id] );
+        console.log( 'Fetching and adding Diagnoses to app state..' );
+        const fetchDiagnoses = async () => {
+            try {
+                const { data: diagnoses } = await axios.get<Diagnosis[]>(
+                    `${ apiBaseUrl }/diagnoses`
+                );
+                dispatchDiagnoses( { type: "SET_DIAGNOSIS", payload: diagnoses } );
+            } catch ( e ) {
+                console.error( e );
+            }
+        };
+        void fetchDiagnoses();
+    }, [ id ] );
 
     return (
         <>
@@ -57,24 +100,41 @@ const SinglePatientPage = () => {
             <p>Occupation: { patient.occupation }</p>
             <br/>
             <p><b>Entries</b></p>
-            {entries?.map( entry => {
+            { entries?.map( entry => {
                 return (
                     <div key={ entry.id }>
                         <p>{ entry.date }</p>
                         <p>{ entry.description }</p>
                         <ul>
-                        {entry.diagnosisCodes && entry.diagnosisCodes.map(c => {
-                            const diagnoseFound = diagnoses?.filter(d => d.code === c);
-                            return (
-                                <li key={c}><b>{c}</b> - {diagnoseFound.map(d => d.name)}</li>
-                            );
+                            { entry.diagnosisCodes && entry.diagnosisCodes.map( c => {
+                                const diagnoseFound = diagnoses?.filter( d => d.code === c );
+                                return (
+                                    <li key={ c }>
+                                        <b>{ c }</b> - { diagnoseFound.map( d => d.name ) }</li>
+                                );
 
-                        }) }
+                            } ) }
                         </ul>
                     </div>
                 );
             } ) }
             <div>
+
+                <AddHospitalEntryModal
+                    modalOpen={ hospitalEntryModalOpen }
+                    onSubmit={ submitNewHospitalEntry }
+                    error={ hospitalEntryError }
+                    onClose={ closeHospitalEntryModal }
+                />
+
+                <Segment>
+                    { hospitalEntryError &&
+                    <Segment inverted color="red">{ `Error: ${ hospitalEntryError }` }</Segment> }
+                    <Button onClick={ () => openHospitalEntryModal() }>Add New hospital
+                        entry</Button>
+                    <Button onClick={ () => console.log( 'hello' ) }>Add New hospital entry</Button>
+                    <Button onClick={ () => console.log( 'hello' ) }>Add New hospital entry</Button>
+                </Segment>
             </div>
         </>
     );

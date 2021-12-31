@@ -51,8 +51,8 @@ const parseHealthCheckRating = ( healthCheckRating: unknown ): HealthCheckRating
 const isDischargeType = ( discharge: any ): DischargeType => {
     if ( !discharge || !discharge.date || !discharge.criteria || !isDate( discharge.date || isString( discharge.criteria ) ) ) {
         throw new Error( `Incorrect or missing discharge: 
-        \nciteria: ${ discharge.criteria } 
-        \ndate: ${ discharge.date } is ${ isDate( discharge.date ) ? 'CORRECT' : 'NOT CORRECT => right date format: 2022-01-01'}` );
+        \ndischarge citeria: ${ discharge.criteria ? 'INCORRECT' : 'EMPTY' } 
+        \ndischarge date: ${ discharge.date } is ${ isDate( discharge.date ) ? 'CORRECT' : 'NOT CORRECT => right date format: 2022-01-01'}` );
     }
     return discharge
 }

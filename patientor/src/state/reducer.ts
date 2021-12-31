@@ -1,5 +1,5 @@
 import { State } from "./state";
-import { Diagnosis, Patient, PatientFromApi } from "../types";
+import { Diagnosis, Entry, Patient, PatientFromApi } from "../types";
 
 
 export type Action =
@@ -18,11 +18,24 @@ export type Action =
     | {
     type: "SET_DIAGNOSIS";
     payload: Diagnosis[]
+}
+    | {
+    type: "ADD_ENTRY";
+    payload: Entry
 };
 
 
 export const reducer = ( state: State, action: Action ): State => {
     switch ( action.type ) {
+        case "ADD_ENTRY":
+            console.log( 'patient entry updated' );
+            console.log('new entry payload: ', action.payload);
+
+            return {
+                patient: {...state.patient},
+                patients: state.patients,
+                diagnoses: state.diagnoses
+            };
         case "SET_DIAGNOSIS":
             console.log( 'patient state updated' );
             return {
