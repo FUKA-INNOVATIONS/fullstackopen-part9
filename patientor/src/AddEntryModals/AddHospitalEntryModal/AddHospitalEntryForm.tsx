@@ -2,8 +2,9 @@ import React from "react";
 import { Grid, Button, Label } from "semantic-ui-react";
 import { Field, Formik, Form } from "formik";
 
-import { TextField } from "./FormFields";
+import { DiagnosisSelection, TextField } from "./FormFields";
 import { HospitalEntry } from "../../types";
+import { useStateValue } from "../../state";
 
 /*
  * use type Patient, but omit id and entries,
@@ -28,6 +29,8 @@ const isDate = ( date: string ): boolean => {
 };
 
 export const AddHospitalEntryForm = ( { onSubmit, onCancel } : Props ) => {
+    const [{ diagnoses }] = useStateValue();
+
     return (
         <Formik
             initialValues={{
@@ -60,7 +63,7 @@ export const AddHospitalEntryForm = ( { onSubmit, onCancel } : Props ) => {
                 return errors;
             }}
         >
-            {({ isValid, dirty }) => {
+            {({ isValid, dirty, setFieldValue, setFieldTouched }) => {
                 return (
                     <Form className="form ui">
                         <Field
@@ -82,12 +85,17 @@ export const AddHospitalEntryForm = ( { onSubmit, onCancel } : Props ) => {
                             name="specialist"
                             component={TextField}
                         />
-                        <Field
+                        <DiagnosisSelection
+                            setFieldValue={setFieldValue}
+                            setFieldTouched={setFieldTouched}
+                            diagnoses={Object.values(diagnoses)}
+                        />
+                        {/*<Field
                             label="Diagnosis Codes"
                             placeholder="Diagnosis codes. Separate with comma. Code duplicates are automatically removed"
                             name="diagnosisCodes"
                             component={TextField}
-                        />
+                        />*/}
 
                         <Grid columns={3} >
                             <Grid.Column>

@@ -7,7 +7,6 @@ import { useStateValue } from "../state";
 import { Segment, Button } from "semantic-ui-react";
 import AddHospitalEntryModal from "../AddEntryModals/AddHospitalEntryModal";
 import { HospitalEntryFormValues } from "../AddEntryModals/AddHospitalEntryModal/AddHospitalEntryForm";
-import { uniq } from "lodash";
 
 interface RouterParams {
     id: string
@@ -31,12 +30,13 @@ const SinglePatientPage = () => {
 
         // Remove white spaces and Convert diagnosisCodes from string array
         // Remove code duplicates
-        const diagnosesLength = values.diagnosisCodes?.length;
+        // This can be used with text field
+        /*const diagnosesLength = values.diagnosisCodes?.length;
         if ( diagnosesLength !== 0 ) {
             values.diagnosisCodes = uniq( values.diagnosisCodes?.toString().replace( /\s/g, '' ).split( ',' ) );
         } else {
             values.diagnosisCodes = [];
-        }
+        }*/
 
         try {
             const { data: newEntry } = await axios.post<Entry>(
