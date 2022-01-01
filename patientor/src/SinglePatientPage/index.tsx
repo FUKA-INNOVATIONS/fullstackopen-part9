@@ -7,6 +7,8 @@ import { useStateValue } from "../state";
 import { Segment, Button } from "semantic-ui-react";
 import AddHospitalEntryModal from "../AddEntryModals/AddHospitalEntryModal";
 import { HospitalEntryFormValues } from "../AddEntryModals/AddHospitalEntryModal/AddHospitalEntryForm";
+import { HealthCheckFormValues } from "../AddEntryModals/AddHealthCheckEntryForm/AddHealthCheckEntryForm";
+import AddHealthCheckEntryModal from "../AddEntryModals/AddHealthCheckEntryForm";
 
 interface RouterParams {
     id: string
@@ -26,6 +28,41 @@ const SinglePatientPage = () => {
         setHospitalEntryModalOpen( false );
         setHospitalEntryError( undefined );
     };
+
+    const [ healthCheckEntryModalOpen, setHealthCheckEntryModalOpen ] = React.useState<boolean>( false );
+    const [ healthCheckEntryError, setHealthCheckEntryError ] = React.useState<string | undefined>();
+    const openHealthCheckEntryModal = (): void => setHealthCheckEntryModalOpen( true );
+    const closeHealthCheckEntryModal = (): void => {
+        setHealthCheckEntryModalOpen( false );
+        setHealthCheckEntryError( undefined );
+    };
+
+
+    const submitNewHealthCheckEntry = async ( values: HealthCheckFormValues ) => {
+
+        // Convert healthCheckRating value to number
+        // otherwise react/formik converts this value to string after changing default value and backend gives error
+        values.healthCheckRating = Number(values.healthCheckRating);
+
+        try {
+            const { data: newEntry } = await axios.post<Entry>(
+                `${ apiBaseUrl }/patients/${ id }/entries`,
+                values
+            );
+            console.log( 'newEntry: ', newEntry );
+            dispatch( { type: "ADD_ENTRY", payload: newEntry } );
+            //closeHospitalEntryModal();
+        } catch ( e ) {
+            console.error( 'Form error: ', e.response?.data || 'Unknown Error' );
+            setHospitalEntryError( e.response?.data?.error || 'Unknown error, Entry was not added. Please check form values and try again!' );
+        }
+
+        // Refresh patient details and close modal.
+        console.log( 'errorState: ', healthCheckEntryError );
+        setRefreshPatient( true );
+        setHealthCheckEntryModalOpen( false );
+    };
+
     const submitNewHospitalEntry = async ( values: HospitalEntryFormValues ) => {
 
         // Remove white spaces and Convert diagnosisCodes from string array
@@ -127,12 +164,15 @@ const SinglePatientPage = () => {
                     onClose={ closeHospitalEntryModal }
                 />
 
+                <AddHealthCheckEntryModal modalOpen={healthCheckEntryModalOpen} onClose={closeHealthCheckEntryModal} onSubmit={submitNewHealthCheckEntry} error={healthCheckEntryError} />
+
                 <Segment>
                     { hospitalEntryError &&
-                    <Segment inverted color="red">{ `Error: ${ hospitalEntryError }` }</Segment> }
+                    <Segment inverted color="red">{ `Hospital Entry Error: ${ hospitalEntryError }` }</Segment> }
+
                     <Button onClick={ () => openHospitalEntryModal() }>Add New hospital
                         entry</Button>
-                    <Button onClick={ () => console.log( 'hello' ) }>Add New hospital entry</Button>
+                    <Button onClick={ () => openHealthCheckEntryModal() }>Add New health check entry</Button>
                     <Button onClick={ () => console.log( 'hello' ) }>Add New hospital entry</Button>
                 </Segment>
             </div>
