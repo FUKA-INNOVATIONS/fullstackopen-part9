@@ -9,6 +9,8 @@ import AddHospitalEntryModal from "../AddEntryModals/AddHospitalEntryModal";
 import { HospitalEntryFormValues } from "../AddEntryModals/AddHospitalEntryModal/AddHospitalEntryForm";
 import { HealthCheckFormValues } from "../AddEntryModals/AddHealthCheckEntryForm/AddHealthCheckEntryForm";
 import AddHealthCheckEntryModal from "../AddEntryModals/AddHealthCheckEntryForm";
+import { OccupationalHealthcareFormValues } from "../AddEntryModals/AddOccupationalHealthcareForm/AddOccupationalHealthcareForm";
+import AddOccupationalHealthcareEntryModal from "../AddEntryModals/AddOccupationalHealthcareForm";
 
 interface RouterParams {
     id: string
@@ -37,6 +39,46 @@ const SinglePatientPage = () => {
         setHealthCheckEntryError( undefined );
     };
 
+    const [ occupationalHealthcareEntryModalOpen, setOccupationalHealthcareEntryModalOpen ] = React.useState<boolean>( false );
+    const [ occupationalHealthcareEntryError, setOccupationalHealthcareError ] = React.useState<string | undefined>();
+    const openOccupationalHealthcareEntryModal = (): void => setOccupationalHealthcareEntryModalOpen( true );
+    const closeOccupationalHealthcareEntryModal = (): void => {
+        setOccupationalHealthcareEntryModalOpen( false );
+        setOccupationalHealthcareError( undefined );
+    };
+
+
+    const submitNewOccupationalHealthcareEntry = async ( values: OccupationalHealthcareFormValues ) => {
+
+        console.log('values 1: ', values);
+
+        if ( values.sickLeave?.startDate.length !== 0  ) {
+            console.log('sickLeave: ', values.sickLeave);
+        } else {
+            console.log('deleted');
+            delete values.sickLeave;
+        }
+
+        console.log('values 2: ', values);
+
+        try {
+            const { data: newEntry } = await axios.post<Entry>(
+                `${ apiBaseUrl }/patients/${ id }/entries`,
+                values
+            );
+            console.log( 'newEntry: ', newEntry );
+            dispatch( { type: "ADD_ENTRY", payload: newEntry } );
+            //closeHospitalEntryModal();
+        } catch ( e ) {
+            console.error( 'Form error: ', e.response?.data || 'Unknown Error' );
+            setHospitalEntryError( e.response?.data?.error || 'Unknown error, Entry was not added. Please check form values and try again!' );
+        }
+
+        // Refresh patient details and close modal.
+        console.log( 'errorState: ', healthCheckEntryError );
+        setRefreshPatient( true );
+        setOccupationalHealthcareEntryModalOpen( false );
+    };
 
     const submitNewHealthCheckEntry = async ( values: HealthCheckFormValues ) => {
 
@@ -164,7 +206,19 @@ const SinglePatientPage = () => {
                     onClose={ closeHospitalEntryModal }
                 />
 
-                <AddHealthCheckEntryModal modalOpen={healthCheckEntryModalOpen} onClose={closeHealthCheckEntryModal} onSubmit={submitNewHealthCheckEntry} error={healthCheckEntryError} />
+                <AddHealthCheckEntryModal
+                    modalOpen={healthCheckEntryModalOpen}
+                    onClose={closeHealthCheckEntryModal}
+                    onSubmit={submitNewHealthCheckEntry}
+                    error={healthCheckEntryError}
+                />
+
+                <AddOccupationalHealthcareEntryModal
+                    modalOpen={occupationalHealthcareEntryModalOpen}
+                    onClose={closeOccupationalHealthcareEntryModal}
+                    onSubmit={submitNewOccupationalHealthcareEntry}
+                    error={occupationalHealthcareEntryError}
+                />
 
                 <Segment>
                     { hospitalEntryError &&
@@ -173,7 +227,7 @@ const SinglePatientPage = () => {
                     <Button onClick={ () => openHospitalEntryModal() }>Add New hospital
                         entry</Button>
                     <Button onClick={ () => openHealthCheckEntryModal() }>Add New health check entry</Button>
-                    <Button onClick={ () => console.log( 'hello' ) }>Add New hospital entry</Button>
+                    <Button onClick={ () => openOccupationalHealthcareEntryModal() }>Add New hospital entry</Button>
                 </Segment>
             </div>
         </>
